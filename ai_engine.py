@@ -3,7 +3,7 @@ import boto3
 
 client = boto3.client(
     "bedrock-runtime",
-    region_name=st.secrets["us-east-1"],
+    region_name="us-east-1",
     aws_access_key_id=st.secrets["AKIAX4UUU3VRD7Z2CH4B"],
     aws_secret_access_key=st.secrets["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"]
 )
