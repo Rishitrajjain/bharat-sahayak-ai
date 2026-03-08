@@ -104,7 +104,7 @@ Citizen Recommendation UI
 
 # 📊 RAG Pipeline
 
-![RAG Pipeline](diagrams/rag_pipeline.png)
+![RAG Pipeline](diagrams/rag-pipeline.png)
 
 1️⃣ Government scheme dataset is embedded using **SentenceTransformers**
 
@@ -200,9 +200,6 @@ Built using **AWS + Generative AI**
 
 ---
 
-# 📜 License
-
-MIT License
 
 
 
