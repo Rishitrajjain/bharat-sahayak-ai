@@ -1,7 +1,7 @@
 from rag_engine import retrieve_schemes
 import boto3
 import streamlit as st
-
+import json
 
 client = boto3.client(
     "bedrock-runtime",
@@ -10,9 +10,7 @@ client = boto3.client(
     aws_secret_access_key=st.secrets["AWS_SECRET_ACCESS_KEY"]
 )
 
-def explain_schemes(profile, user_query):
-
-    schemes = retrieve_schemes(user_query)
+def explain_schemes(profile, schemes):
 
     prompt = f"""
 You are Bharat Sahayak AI helping Indian citizens understand government schemes.
@@ -20,21 +18,26 @@ You are Bharat Sahayak AI helping Indian citizens understand government schemes.
 Citizen profile:
 {profile}
 
-Relevant schemes retrieved from knowledge base:
+Relevant schemes:
 {schemes}
 
-Explain which schemes match the citizen and why in simple Hindi.
+Explain why these schemes match the citizen in simple Hindi.
 """
 
-    response = client.converse(
+    body = {
+        "prompt": prompt,
+        "max_gen_len": 512,
+        "temperature": 0.5
+    }
+
+    response = client.invoke_model(
         modelId="meta.llama3-8b-instruct-v1",
-        messages=[{
-            "role":"user",
-            "content":[{"text":prompt}]
-        }]
+        body=json.dumps(body)
     )
 
-    return response["output"]["message"]["content"][0]["text"]
+    result = json.loads(response["body"].read())
+
+    return result["generation"]
 
 
 # -----------------------------------
