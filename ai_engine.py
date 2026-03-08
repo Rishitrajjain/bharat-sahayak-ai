@@ -25,20 +25,26 @@ Explain why these schemes match the citizen in simple Hindi.
 """
 
     body = {
-        "prompt": prompt,
+        "messages": [
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
         "max_gen_len": 512,
         "temperature": 0.5
     }
 
     response = client.invoke_model(
         modelId="meta.llama3-8b-instruct-v1",
-        body=json.dumps(body)
+        body=json.dumps(body),
+        contentType="application/json",
+        accept="application/json"
     )
 
     result = json.loads(response["body"].read())
 
     return result["generation"]
-
 
 # -----------------------------------
 # AI Application Guide
