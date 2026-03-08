@@ -1,7 +1,6 @@
 from rag_engine import retrieve_schemes
 import boto3
 import streamlit as st
-import json
 
 client = boto3.client(
     "bedrock-runtime",
@@ -24,27 +23,28 @@ Relevant schemes:
 Explain why these schemes match the citizen in simple Hindi.
 """
 
-    body = {
-        "messages": [
-            {
-                "role": "user",
-                "content": prompt
+    try:
+        response = client.converse(
+            modelId="meta.llama3-8b-instruct-v1:0",
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"text": prompt}
+                    ]
+                }
+            ],
+            inferenceConfig={
+                "maxTokens": 500,
+                "temperature": 0.5
             }
-        ],
-        "max_gen_len": 512,
-        "temperature": 0.5
-    }
+        )
 
-    response = client.invoke_model(
-        modelId="meta.llama3-8b-instruct-v1",
-        body=json.dumps(body),
-        contentType="application/json",
-        accept="application/json"
-    )
+        answer = response["output"]["message"]["content"][0]["text"]
+        return answer
 
-    result = json.loads(response["body"].read())
-
-    return result["generation"]
+    except Exception as e:
+        return "AI explanation temporarily unavailable, but these schemes match your profile."
 
 # -----------------------------------
 # AI Application Guide
