@@ -27,7 +27,7 @@ Explain which schemes match the citizen and why in simple Hindi.
 """
 
     response = client.converse(
-        modelId="meta.llama3-8b-instruct-v1:0",
+        modelId="meta.llama3-8b-instruct-v1",
         messages=[{
             "role":"user",
             "content":[{"text":prompt}]
