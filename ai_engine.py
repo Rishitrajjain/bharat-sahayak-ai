@@ -1,11 +1,12 @@
 from rag_engine import retrieve_schemes
 import boto3
 
+
 client = boto3.client(
     "bedrock-runtime",
-    region_name="us-east-1",
-    aws_access_key_id=st.secrets["AKIAX4UUU3VRD7Z2CH4B"],
-    aws_secret_access_key=st.secrets["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"]
+    region_name=st.secrets["AWS_DEFAULT_REGION"],
+    aws_access_key_id=st.secrets["AWS_ACCESS_KEY_ID"],
+    aws_secret_access_key=st.secrets["AWS_SECRET_ACCESS_KEY"]
 )
 
 def explain_schemes(profile, user_query):
