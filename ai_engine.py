@@ -1,5 +1,6 @@
 from rag_engine import retrieve_schemes
 import boto3
+import streamlit as st
 
 
 client = boto3.client(
