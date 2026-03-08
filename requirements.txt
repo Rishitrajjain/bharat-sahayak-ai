@@ -1,0 +1,8 @@
+streamlit
+boto3
+sentence-transformers
+faiss-cpu
+speechrecognition
+gtts
+pandas
+numpy
