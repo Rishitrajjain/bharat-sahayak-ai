@@ -1,4 +1,4 @@
-# 🇮🇳 Bharat Sahayak AI
+# Bharat Sahayak AI
 
 ### AI-powered Government Scheme Discovery Assistant
 
