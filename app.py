@@ -56,8 +56,13 @@ color:white;
 # HEADER
 # -----------------------------
 
-st.title("🇮🇳 Bharat Sahayak AI")
-st.caption("Discover Government Schemes with AI Assistance")
+st.markdown(
+"""
+<h1 style='text-align:center;'>🇮🇳 Bharat Sahayak AI</h1>
+<p style='text-align:center;'>Your AI Guide to Government Schemes</p>
+""",
+unsafe_allow_html=True
+)
 
 st.divider()
 
