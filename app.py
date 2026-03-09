@@ -179,24 +179,37 @@ if user_text:
 
             score = s["score"]
 
-            fig = go.Figure(go.Indicator(
-                mode="gauge+number",
-                value=score,
-                title={'text': "Eligibility Score"},
-                gauge={
-                    'axis': {'range': [0, 100]},
-                    'bar': {'color': "#3b82f6"},
-                    'steps': [
-                        {'range': [0, 40], 'color': "#7f1d1d"},
-                        {'range': [40, 70], 'color': "#92400e"},
-                        {'range': [70, 100], 'color': "#065f46"}
-                    ],
-                }
-             ))
+            colA, colB = st.columns([3,1])
 
-            fig.update_layout(height=250)
+            with colA:
+                st.markdown(f"""
+                <div class="scheme">
+                <h3>{s['name']}</h3>
+                <p>{s['benefit']}</p>
+                </div>
+                """, unsafe_allow_html=True)
 
-            st.plotly_chart(fig, use_container_width=True)
+            with colB:
+                score = s["score"]
+            
+                fig = go.Figure(go.Indicator(
+                    mode="gauge+number",
+                    value=score,
+                    title={'text': "Score"},
+                    gauge={
+                        'axis': {'range': [0, 100]},
+                        'bar': {'color': "#3b82f6"},
+                        'steps': [
+                            {'range': [0, 40], 'color': "#7f1d1d"},
+                            {'range': [40, 70], 'color': "#92400e"},
+                            {'range': [70, 100], 'color': "#065f46"}
+                        ],
+                    }
+                ))
+            
+                fig.update_layout(height=200)
+            
+                st.plotly_chart(fig, use_container_width=True, key=f"gauge{i}")
 
             col1, col2 = st.columns(2)
 
