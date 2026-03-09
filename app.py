@@ -2,11 +2,14 @@ import streamlit as st
 
 from eligibility_engine import find_eligible_schemes, rank_schemes
 from ai_engine import explain_schemes, application_guide
-from voice_input import listen_for_income
-from voice_output import speak
 from voice_profile_parser import parse_voice_profile
 from rag_engine import retrieve_schemes
+from voice_output import speak
 
+
+# -----------------------------
+# PAGE CONFIG
+# -----------------------------
 
 st.set_page_config(
     page_title="Bharat Sahayak AI",
@@ -14,9 +17,9 @@ st.set_page_config(
     layout="wide"
 )
 
-# ---------------------
-# DARK UI
-# ---------------------
+# -----------------------------
+# CUSTOM DARK UI
+# -----------------------------
 
 st.markdown("""
 <style>
@@ -32,97 +35,111 @@ color:white;
 .scheme{
 background:#1e293b;
 padding:20px;
-border-radius:10px;
+border-radius:12px;
 margin-bottom:20px;
+border:1px solid #334155;
+}
+
+.scheme:hover{
+border:1px solid #3b82f6;
+}
+
+.stTextInput>div>div>input{
+background:#1e293b;
+color:white;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------------
+# -----------------------------
 # HEADER
-# ---------------------
+# -----------------------------
 
 st.title("🇮🇳 Bharat Sahayak AI")
-st.caption("Talk to AI to discover government schemes")
+st.caption("Discover Government Schemes with AI Assistance")
 
 st.divider()
 
-# ---------------------
+# -----------------------------
 # USER INPUT
-# ---------------------
+# -----------------------------
 
-st.subheader("🎤 Talk to Bharat Sahayak")
+st.subheader("🧾 Tell us about yourself")
 
 user_text = st.text_input(
-"Example: मैं किसान हूँ मेरी आय 2 लाख है और मैं उत्तर प्रदेश से हूँ"
+    "Example: मैं किसान हूँ मेरी आय 2 लाख है और मैं उत्तर प्रदेश से हूँ"
 )
 
-voice_button = st.button("🎙 Speak")
-
-if voice_button:
-
-    speech = listen_for_income()
-
-    user_text = speech
-
-    st.write("You said:", speech)
-
-# ---------------------
-# PROCESS PROFILE
-# ---------------------
+# -----------------------------
+# MAIN AI ENGINE
+# -----------------------------
 
 if user_text:
 
+    # Parse user profile
     profile = parse_voice_profile(user_text)
 
     st.subheader("🧠 AI Detected Profile")
 
     st.json(profile)
 
-    # ---------------------
-    # FIND SCHEMES
-    # ---------------------
-    retrieved = retrieve_schemes(user_text)
-    schemes = find_eligible_schemes(profile,retrieved)
+    # Retrieve schemes via RAG
+    retrieved_schemes = retrieve_schemes(user_text)
 
-    top_schemes = rank_schemes(schemes)
+    # Eligibility engine
+    eligible = find_eligible_schemes(profile, retrieved_schemes)
 
-    st.subheader("🏆 Recommended Schemes")
+    # Ranking
+    top_schemes = rank_schemes(eligible)
 
-    for s in top_schemes:
+    # -----------------------------
+    # DISPLAY SCHEMES
+    # -----------------------------
 
-        st.markdown(f"""
-        <div class="scheme">
-        <h3>{s['name']}</h3>
-        <p>{s['benefit']}</p>
-        </div>
-        """, unsafe_allow_html=True)
+    st.subheader("🏆 Recommended Government Schemes")
 
-        st.progress(s["score"]/100)
+    if len(top_schemes) == 0:
 
-        st.write("Eligibility Score:", s["score"], "%")
+        st.warning("No schemes found for this profile.")
 
-        col1,col2 = st.columns(2)
+    else:
 
-        with col1:
+        for i, s in enumerate(top_schemes):
 
-            if st.button(f"📄 Documents {s['name']}"):
+            st.markdown(f"""
+            <div class="scheme">
+            <h3>{s['name']}</h3>
+            <p>{s['benefit']}</p>
+            </div>
+            """, unsafe_allow_html=True)
 
-                for d in s["documents"]:
-                    st.write("-", d)
+            st.progress(s["score"]/100)
 
-        with col2:
+            st.write("Eligibility Score:", s["score"], "%")
 
-            if st.button(f"📝 Apply {s['name']}"):
+            col1, col2 = st.columns(2)
 
-                guide = application_guide(s)
+            with col1:
 
-                st.info(guide)
+                if st.button(f"📄 Documents for {s['name']}", key=f"doc{i}"):
 
-    # ---------------------
+                    for d in s["documents"]:
+                        st.write("•", d)
+
+            with col2:
+
+                if st.button(f"📝 How to Apply for {s['name']}", key=f"apply{i}"):
+
+                    guide = application_guide(s)
+
+                    st.info(guide)
+
+    # -----------------------------
     # AI EXPLANATION
-    # ---------------------
+    # -----------------------------
+
+    st.divider()
 
     st.subheader("🤖 AI Explanation")
 
@@ -130,22 +147,41 @@ if user_text:
 
     st.write(explanation)
 
-    speak(explanation)
+    # Optional voice output
+    try:
+        speak(explanation)
+    except:
+        pass
 
-# ---------------------
+
+# -----------------------------
 # CHAT MODE
-# ---------------------
+# -----------------------------
 
 st.divider()
 
-st.subheader("💬 Ask AI")
+st.subheader("💬 Ask Bharat Sahayak")
 
-question = st.text_input("Ask about schemes")
+question = st.text_input("Ask anything about government schemes")
 
 if question:
 
     st.chat_message("user").write(question)
 
-    answer = explain_schemes(profile, top_schemes)
+    if user_text:
+
+        answer = explain_schemes(profile, question)
+
+    else:
+
+        answer = "Please tell me about yourself first so I can recommend the best schemes."
 
     st.chat_message("assistant").write(answer)
+
+# -----------------------------
+# FOOTER
+# -----------------------------
+
+st.divider()
+
+st.caption("Built with ❤️ for Digital India")
