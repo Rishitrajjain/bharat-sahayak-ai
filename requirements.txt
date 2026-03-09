@@ -5,3 +5,4 @@ faiss-cpu
 gtts
 pandas
 numpy
+plotly
