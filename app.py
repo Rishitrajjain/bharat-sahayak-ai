@@ -170,15 +170,6 @@ if user_text:
 
         for i, s in enumerate(top_schemes):
 
-            st.markdown(f"""
-            <div class="scheme">
-            <h3>{s['name']}</h3>
-            <p>{s['benefit']}</p>
-            </div>
-            """, unsafe_allow_html=True)
-
-            score = s["score"]
-
             colA, colB = st.columns([3,1])
 
             with colA:
