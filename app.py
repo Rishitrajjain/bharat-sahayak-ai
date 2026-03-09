@@ -196,7 +196,7 @@ if user_text:
 
             fig.update_layout(height=250)
 
-            st.plotly_chart(fig, use_container_width=True))
+            st.plotly_chart(fig, use_container_width=True)
 
             col1, col2 = st.columns(2)
 
