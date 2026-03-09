@@ -5,6 +5,7 @@ from ai_engine import explain_schemes, application_guide
 from voice_profile_parser import parse_voice_profile
 from rag_engine import retrieve_schemes
 from voice_output import speak
+import plotly.graph_objects as go
 
 
 # -----------------------------
@@ -72,16 +73,18 @@ border:1px solid #3b82f6;
 
 st.markdown(
 """
-<h1 style='text-align:center;'>🇮🇳 Bharat Sahayak AI</h1>
-<p style='text-align:center;font-size:18px;'>Your AI Guide to Government Schemes</p>
+<h1 style='text-align:center;font-size:48px;'>🇮🇳 Bharat Sahayak AI</h1>
+<p style='text-align:center;font-size:20px;'>Your AI Guide to Government Schemes</p>
+<p style='text-align:center;font-size:14px;color:#9ca3af;'>
+Helping citizens discover the right government benefits with AI
+</p>
 """,
 unsafe_allow_html=True
 )
 
-st.image(
-"https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
-width=100
-)
+col1, col2, col3 = st.columns([1,2,1])
+with col2:
+    st.image("https://cdn-icons-png.flaticon.com/512/3135/3135715.png", width=120)
 
 st.divider()
 
@@ -174,9 +177,26 @@ if user_text:
             </div>
             """, unsafe_allow_html=True)
 
-            st.progress(s["score"]/100)
+            score = s["score"]
 
-            st.write("Eligibility Score:", s["score"], "%")
+            fig = go.Figure(go.Indicator(
+                mode="gauge+number",
+                value=score,
+                title={'text': "Eligibility Score"},
+                gauge={
+                    'axis': {'range': [0, 100]},
+                    'bar': {'color': "#3b82f6"},
+                    'steps': [
+                        {'range': [0, 40], 'color': "#7f1d1d"},
+                        {'range': [40, 70], 'color': "#92400e"},
+                        {'range': [70, 100], 'color': "#065f46"}
+                    ],
+                }
+             ))
+
+            fig.update_layout(height=250)
+
+            st.plotly_chart(fig, use_container_width=True))
 
             col1, col2 = st.columns(2)
 
