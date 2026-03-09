@@ -44,6 +44,7 @@ Explain why these schemes match the citizen in simple Hindi.
         return answer
 
     except Exception as e:
+        st.error(f"Bedrock error: {e}")
         return "AI explanation temporarily unavailable, but these schemes match your profile."
 
 # -----------------------------------
