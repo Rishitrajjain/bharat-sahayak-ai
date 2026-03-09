@@ -25,7 +25,8 @@ st.markdown("""
 <style>
 
 .stApp{
-background:#0f172a;
+background: radial-gradient(circle at top, #1e3a8a, #0f172a);
+background-attachment: fixed;
 }
 
 h1,h2,h3,h4{
@@ -49,20 +50,72 @@ background:#1e293b;
 color:white;
 }
 
+.feature-card{
+background:#1e293b;
+padding:20px;
+border-radius:10px;
+border:1px solid #334155;
+text-align:center;
+}
+
+.feature-card:hover{
+border:1px solid #3b82f6;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
+
 # -----------------------------
-# HEADER
+# HERO SECTION
 # -----------------------------
 
 st.markdown(
 """
 <h1 style='text-align:center;'>🇮🇳 Bharat Sahayak AI</h1>
-<p style='text-align:center;'>Your AI Guide to Government Schemes</p>
+<p style='text-align:center;font-size:18px;'>Your AI Guide to Government Schemes</p>
 """,
 unsafe_allow_html=True
 )
+
+st.image(
+"https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+width=100
+)
+
+st.divider()
+
+
+# -----------------------------
+# FEATURE CARDS
+# -----------------------------
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    st.markdown("""
+    <div class="feature-card">
+    <h3>🎯 Smart Discovery</h3>
+    <p>AI analyzes your profile and finds the most relevant government schemes.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+with col2:
+    st.markdown("""
+    <div class="feature-card">
+    <h3>🧠 AI Explanation</h3>
+    <p>Understand why a scheme matches your profile in simple language.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+with col3:
+    st.markdown("""
+    <div class="feature-card">
+    <h3>📄 Application Help</h3>
+    <p>Get step-by-step instructions to apply for schemes easily.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
 
 st.divider()
 
@@ -72,8 +125,12 @@ st.divider()
 
 st.subheader("🧾 Tell us about yourself")
 
+st.caption("Try examples:")
+st.write("• मैं किसान हूँ मेरी आय 2 लाख है और मैं उत्तर प्रदेश से हूँ")
+st.write("• मैं महिला हूँ और छोटा व्यवसाय शुरू करना चाहती हूँ")
+
 user_text = st.text_input(
-    "Example: मैं किसान हूँ मेरी आय 2 लाख है और मैं उत्तर प्रदेश से हूँ"
+    "Describe yourself:"
 )
 
 # -----------------------------
@@ -82,21 +139,19 @@ user_text = st.text_input(
 
 if user_text:
 
-    # Parse user profile
-    profile = parse_voice_profile(user_text)
+    with st.spinner("🤖 AI is analyzing your profile..."):
 
-    st.subheader("🧠 AI Detected Profile")
+        profile = parse_voice_profile(user_text)
 
-    st.json(profile)
+        st.subheader("🧠 AI Detected Profile")
 
-    # Retrieve schemes via RAG
-    retrieved_schemes = retrieve_schemes(user_text)
+        st.json(profile)
 
-    # Eligibility engine
-    eligible = find_eligible_schemes(profile, retrieved_schemes)
+        retrieved_schemes = retrieve_schemes(user_text)
 
-    # Ranking
-    top_schemes = rank_schemes(eligible)
+        eligible = find_eligible_schemes(profile, retrieved_schemes)
+
+        top_schemes = rank_schemes(eligible)
 
     # -----------------------------
     # DISPLAY SCHEMES
@@ -152,7 +207,6 @@ if user_text:
 
     st.write(explanation)
 
-    # Optional voice output
     try:
         speak(explanation)
     except:
@@ -182,6 +236,7 @@ if question:
         answer = "Please tell me about yourself first so I can recommend the best schemes."
 
     st.chat_message("assistant").write(answer)
+
 
 # -----------------------------
 # FOOTER
